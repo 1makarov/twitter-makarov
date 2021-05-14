@@ -2,7 +2,7 @@ package twitter
 
 import "time"
 
-type AddRulesResponce struct {
+type AddRulesResponse struct {
 	Meta struct {
 		Sent    time.Time `json:"sent"`
 		Summary struct {
@@ -20,7 +20,7 @@ type AddRulesResponce struct {
 	} `json:"errors"`
 }
 
-type DeleteRulesResponce struct {
+type DeleteRulesResponse struct {
 	Meta struct {
 		Sent    time.Time `json:"sent"`
 		Summary struct {
@@ -40,7 +40,7 @@ type DeleteRulesResponce struct {
 	} `json:"errors"`
 }
 
-type ValidateRulesResponce struct {
+type ValidateRulesResponse struct {
 	Data []struct {
 		Value string `json:"value"`
 		Tag   string `json:"tag"`
@@ -63,7 +63,7 @@ type ValidateRulesResponce struct {
 	} `json:"errors"`
 }
 
-type GetListRulesResponce struct {
+type GetListRulesResponse struct {
 	Data []Rule `json:"data"`
 	Meta struct {
 		Sent time.Time `json:"sent"`

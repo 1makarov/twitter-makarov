@@ -50,7 +50,7 @@ func Session(bearer string) *session {
 	return &session{Bearer: bearer}
 }
 
-func (c *session) AddRulesFilteredStream(rules []Rule) (*AddRulesResponce, error) {
+func (c *session) AddRulesFilteredStream(rules []Rule) (*AddRulesResponse, error) {
 	requestBody, err := json.Marshal(AddRules{Add: rules})
 	if err != nil {
 		return nil, err
@@ -71,7 +71,7 @@ func (c *session) AddRulesFilteredStream(rules []Rule) (*AddRulesResponce, error
 		return nil, notOKStatusCode
 	}
 
-	var responceBody AddRulesResponce
+	var responceBody AddRulesResponse
 	if err = json.Unmarshal(responce.Body(), &responceBody); err != nil {
 		return nil, err
 	}
@@ -79,7 +79,7 @@ func (c *session) AddRulesFilteredStream(rules []Rule) (*AddRulesResponce, error
 	return &responceBody, nil
 }
 
-func (c *session) DeleteRulesFilteredStream(ids []string) (*DeleteRulesResponce, error) {
+func (c *session) DeleteRulesFilteredStream(ids []string) (*DeleteRulesResponse, error) {
 	requestBody, err := json.Marshal(DeleteRules{Delete: Ids{Ids: ids}})
 	if err != nil {
 		return nil, err
@@ -100,7 +100,7 @@ func (c *session) DeleteRulesFilteredStream(ids []string) (*DeleteRulesResponce,
 		return nil, notOKStatusCode
 	}
 
-	var responceBody DeleteRulesResponce
+	var responceBody DeleteRulesResponse
 	if err = json.Unmarshal(responce.Body(), &responceBody); err != nil {
 		return nil, err
 	}
@@ -108,7 +108,7 @@ func (c *session) DeleteRulesFilteredStream(ids []string) (*DeleteRulesResponce,
 	return &responceBody, nil
 }
 
-func (c *session) ValidateRulesFilteredStream(rules []Rule) (*ValidateRulesResponce, error) {
+func (c *session) ValidateRulesFilteredStream(rules []Rule) (*ValidateRulesResponse, error) {
 	requestBody, err := json.Marshal(AddRules{Add: rules})
 	if err != nil {
 		return nil, err
@@ -129,7 +129,7 @@ func (c *session) ValidateRulesFilteredStream(rules []Rule) (*ValidateRulesRespo
 		return nil, notOKStatusCode
 	}
 
-	var responceBody ValidateRulesResponce
+	var responceBody ValidateRulesResponse
 	if err = json.Unmarshal(responce.Body(), &responceBody); err != nil {
 		return nil, err
 	}
@@ -137,7 +137,7 @@ func (c *session) ValidateRulesFilteredStream(rules []Rule) (*ValidateRulesRespo
 	return &responceBody, nil
 }
 
-func (c *session) GetListRulesFilteredStream() (*GetListRulesResponce, error) {
+func (c *session) GetListRulesFilteredStream() (*GetListRulesResponse, error) {
 	request := fasthttp.AcquireRequest()
 	request.Header.SetRequestURI(defaultURL + getListRules)
 	request.Header.Set("authorization", fmt.Sprintf("Bearer %s", c.Bearer))
@@ -151,7 +151,7 @@ func (c *session) GetListRulesFilteredStream() (*GetListRulesResponce, error) {
 		return nil, notOKStatusCode
 	}
 
-	var responceBody GetListRulesResponce
+	var responceBody GetListRulesResponse
 	if err := json.Unmarshal(responce.Body(), &responceBody); err != nil {
 		return nil, err
 	}
