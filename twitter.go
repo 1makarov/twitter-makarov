@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/dghubble/oauth1"
 	"github.com/valyala/fasthttp"
 	"net/http"
 )
@@ -16,7 +17,8 @@ const (
 	deleteRules   = "/tweets/search/stream/rules"
 	validateRules = "/tweets/search/stream/rules?dry_run=true"
 	getListRules  = "/tweets/search/stream/rules"
-	stream        = "/tweets/search/stream"
+	streamv2      = "/tweets/search/stream"
+	streamv1      = "https://stream.twitter.com/1.1/statuses/filter.json?"
 )
 
 var (
@@ -24,8 +26,12 @@ var (
 )
 
 type session struct {
-	Bearer string
-	Stream *bufio.Reader
+	Bearer            string
+	ConsumerKey       string
+	ConsumerSecretKey string
+	AccessKey         string
+	AccessSecretKey   string
+	Stream            *bufio.Reader
 }
 
 type AddRules struct {
@@ -159,17 +165,39 @@ func (c *session) GetListRulesFilteredStream() (*GetListRulesResponse, error) {
 	return &responceBody, nil
 }
 
-func (c *session) FilteredStream() error {
+func (c *session) FilteredStreamV2() error {
 	client := http.Client{}
 
-	req, err := http.NewRequest(http.MethodGet, defaultURL + stream, nil)
+	req, err := http.NewRequest(http.MethodGet, defaultURL+streamv2, nil)
 	if err != nil {
 		return err
 	}
+
 	req.Header.Set("authorization", fmt.Sprintf("Bearer %s", c.Bearer))
+
 	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
 
 	c.Stream = bufio.NewReader(resp.Body)
+
+	return nil
+}
+
+func (c *session) FilteredStreamV1() error {
+	config := oauth1.NewConfig(c.ConsumerKey, c.ConsumerSecretKey)
+	token := oauth1.NewToken(c.AccessKey, c.AccessSecretKey)
+	httpClient := config.Client(oauth1.NoContext, token)
+
+	resp, err := httpClient.Get(streamv1)
+	if err != nil {
+		return err
+	}
+
+	body := bufio.NewReader(resp.Body)
+
+	c.Stream = body
 
 	return nil
 }
