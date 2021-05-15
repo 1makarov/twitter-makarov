@@ -8,6 +8,7 @@ import (
 	"github.com/dghubble/oauth1"
 	"github.com/valyala/fasthttp"
 	"net/http"
+	"net/url"
 )
 
 const (
@@ -185,12 +186,12 @@ func (c *session) FilteredStreamV2() error {
 	return nil
 }
 
-func (c *session) FilteredStreamV1() error {
+func (c *session) FilteredStreamV1(bodyRequest url.Values) error {
 	config := oauth1.NewConfig(c.ConsumerKey, c.ConsumerSecretKey)
 	token := oauth1.NewToken(c.AccessKey, c.AccessSecretKey)
 	httpClient := config.Client(oauth1.NoContext, token)
 
-	resp, err := httpClient.Get(streamv1)
+	resp, err := httpClient.Get(streamv1 + bodyRequest.Encode())
 	if err != nil {
 		return err
 	}
