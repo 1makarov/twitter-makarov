@@ -53,8 +53,13 @@ type Ids struct {
 	Ids []string `json:"ids"`
 }
 
-func Session(bearer string) *session {
-	return &session{Bearer: bearer}
+func Session(Bearer, ConsumerKey, ConsumerSecretKey, AccessKey, AccessSecretKey string) *session {
+	return &session{
+		Bearer:            Bearer,
+		ConsumerKey:       ConsumerKey,
+		ConsumerSecretKey: ConsumerSecretKey,
+		AccessKey:         AccessKey,
+		AccessSecretKey:   AccessSecretKey}
 }
 
 func (c *session) AddRulesFilteredStream(rules []Rule) (*AddRulesResponse, error) {
