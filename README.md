@@ -1,4 +1,10 @@
 ```go
+if err := twitterClient.FilteredStream(url.Values{
+    "follow": {"123"},
+    }); err != nil {
+    log.Fatal()
+}
+
 for {
 	line, err := twitterClient.Stream.ReadBytes('\n')
 	if err != nil {
