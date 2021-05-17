@@ -26,7 +26,7 @@ var (
 	notOKStatusCode = errors.New("not ok status code")
 )
 
-type session struct {
+type Session struct {
 	Bearer            string
 	ConsumerKey       string
 	ConsumerSecretKey string
@@ -53,8 +53,8 @@ type Ids struct {
 	Ids []string `json:"ids"`
 }
 
-func Session(Bearer, ConsumerKey, ConsumerSecretKey, AccessKey, AccessSecretKey string) *session {
-	return &session{
+func NewSession(Bearer, ConsumerKey, ConsumerSecretKey, AccessKey, AccessSecretKey string) *Session {
+	return &Session{
 		Bearer:            Bearer,
 		ConsumerKey:       ConsumerKey,
 		ConsumerSecretKey: ConsumerSecretKey,
@@ -62,7 +62,7 @@ func Session(Bearer, ConsumerKey, ConsumerSecretKey, AccessKey, AccessSecretKey 
 		AccessSecretKey:   AccessSecretKey}
 }
 
-func (c *session) AddRulesFilteredStream(rules []Rule) (*AddRulesResponse, error) {
+func (c *Session) AddRulesFilteredStream(rules []Rule) (*AddRulesResponse, error) {
 	requestBody, err := json.Marshal(AddRules{Add: rules})
 	if err != nil {
 		return nil, err
@@ -91,7 +91,7 @@ func (c *session) AddRulesFilteredStream(rules []Rule) (*AddRulesResponse, error
 	return &responceBody, nil
 }
 
-func (c *session) DeleteRulesFilteredStream(ids []string) (*DeleteRulesResponse, error) {
+func (c *Session) DeleteRulesFilteredStream(ids []string) (*DeleteRulesResponse, error) {
 	requestBody, err := json.Marshal(DeleteRules{Delete: Ids{Ids: ids}})
 	if err != nil {
 		return nil, err
@@ -120,7 +120,7 @@ func (c *session) DeleteRulesFilteredStream(ids []string) (*DeleteRulesResponse,
 	return &responceBody, nil
 }
 
-func (c *session) ValidateRulesFilteredStream(rules []Rule) (*ValidateRulesResponse, error) {
+func (c *Session) ValidateRulesFilteredStream(rules []Rule) (*ValidateRulesResponse, error) {
 	requestBody, err := json.Marshal(AddRules{Add: rules})
 	if err != nil {
 		return nil, err
@@ -149,7 +149,7 @@ func (c *session) ValidateRulesFilteredStream(rules []Rule) (*ValidateRulesRespo
 	return &responceBody, nil
 }
 
-func (c *session) GetListRulesFilteredStream() (*GetListRulesResponse, error) {
+func (c *Session) GetListRulesFilteredStream() (*GetListRulesResponse, error) {
 	request := fasthttp.AcquireRequest()
 	request.Header.SetRequestURI(defaultURL + getListRules)
 	request.Header.Set("authorization", fmt.Sprintf("Bearer %s", c.Bearer))
@@ -171,7 +171,7 @@ func (c *session) GetListRulesFilteredStream() (*GetListRulesResponse, error) {
 	return &responceBody, nil
 }
 
-func (c *session) FilteredStreamV2() error {
+func (c *Session) FilteredStreamV2() error {
 	client := http.Client{}
 
 	req, err := http.NewRequest(http.MethodGet, defaultURL+streamv2, nil)
@@ -191,7 +191,7 @@ func (c *session) FilteredStreamV2() error {
 	return nil
 }
 
-func (c *session) FilteredStreamV1(bodyRequest url.Values) error {
+func (c *Session) FilteredStreamV1(bodyRequest url.Values) error {
 	config := oauth1.NewConfig(c.ConsumerKey, c.ConsumerSecretKey)
 	token := oauth1.NewToken(c.AccessKey, c.AccessSecretKey)
 	httpClient := config.Client(oauth1.NoContext, token)
