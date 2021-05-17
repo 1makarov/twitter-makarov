@@ -1,4 +1,4 @@
-package twt
+package twitter
 
 import (
 	"bufio"
