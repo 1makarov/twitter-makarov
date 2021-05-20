@@ -8,7 +8,6 @@ import (
 	"github.com/dghubble/oauth1"
 	"github.com/valyala/fasthttp"
 	"net/http"
-	"net/url"
 )
 
 const (
@@ -74,21 +73,21 @@ func (c *Session) AddRulesFilteredStream(rules []Rule) (*AddRulesResponse, error
 	request.Header.SetContentType("application/json")
 	request.Header.SetMethod(fasthttp.MethodPost)
 	request.SetBody(requestBody)
-	responce := fasthttp.AcquireResponse()
+	response := fasthttp.AcquireResponse()
 
-	if err = fasthttp.Do(request, responce); err != nil {
+	if err = fasthttp.Do(request, response); err != nil {
 		return nil, err
 	}
-	if responce.StatusCode() != fasthttp.StatusCreated {
+	if response.StatusCode() != fasthttp.StatusCreated {
 		return nil, notOKStatusCode
 	}
 
-	var responceBody AddRulesResponse
-	if err = json.Unmarshal(responce.Body(), &responceBody); err != nil {
+	var responseBody AddRulesResponse
+	if err = json.Unmarshal(response.Body(), &responseBody); err != nil {
 		return nil, err
 	}
 
-	return &responceBody, nil
+	return &responseBody, nil
 }
 
 func (c *Session) DeleteRulesFilteredStream(ids []string) (*DeleteRulesResponse, error) {
@@ -191,12 +190,12 @@ func (c *Session) FilteredStreamV2() error {
 	return nil
 }
 
-func (c *Session) FilteredStreamV1(bodyRequest url.Values) error {
+func (c *Session) FilteredStreamV1(bodyRequest string) error {
 	config := oauth1.NewConfig(c.ConsumerKey, c.ConsumerSecretKey)
 	token := oauth1.NewToken(c.AccessKey, c.AccessSecretKey)
 	httpClient := config.Client(oauth1.NoContext, token)
 
-	resp, err := httpClient.Get(streamv1 + bodyRequest.Encode())
+	resp, err := httpClient.Get(streamv1 + bodyRequest)
 	if err != nil {
 		return err
 	}
